@@ -2,9 +2,9 @@
 
 {% block title %}Space Inviters!{% endblock %}
 
-{% macro sortArrow(sortName, sort, sortDirection) %}
-    {% if sort == sortName %}
-        {% if sortDirection == 'asc' %}
+{% macro sortArrow(direction) %}
+    {% if direction %}
+        {% if direction == 'ASC' %}
             <svg xmlns="http://www.w3.org/2000/svg" class="inline-block w-4 h-4" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                <path d="M6 15l6 -6l6 6"></path>
@@ -45,8 +45,8 @@
                 <div class="w-1/3 flex">
                     <input
                         type="search"
-                        name="query"
-                        value="{{ app.request.query.get('query') }}"
+                        name="q"
+                        value="{{ voyages.input.query }}"
                         aria-label="Search voyages"
                         placeholder="Search voyages"
                         class="px-4 py-2 rounded bg-gray-800 text-white placeholder-gray-400"
@@ -73,10 +73,10 @@
                                 <input
                                     type="checkbox"
                                     class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                                    name="planets[]"
+                                    name="filters[planet][]"
                                     value="{{ planet.id }}"
                                     id="planet-search-{{ planet.id }}"
-                                    {{ planet.id in searchPlanets ? 'checked' : '' }}
+                                    {{ planet.id in voyages.input.filter('planet') ? 'checked' : '' }}
                                 >
                                 <label for="planet-search-{{ planet.id }}" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{ planet.name }}</label>
                             </div>
@@ -90,7 +90,7 @@
                     </twig:Modal>
                 </div>
                 {% block result_count %}
-                    <div id="voyage-result-count" class="whitespace-nowrap m-2 mr-4">{{ voyages|length }} results</div>
+                    <div id="voyage-result-count" class="whitespace-nowrap m-2 mr-4">{{ voyages.page.totalCount }} results</div>
                 {% endblock %}
             </form>
             <turbo-frame id="voyage-list" data-turbo-action="advance">
@@ -99,22 +99,16 @@
                         <thead>
                             <tr>
                                 <th class="text-left py-2">
-                                    <a href="{{ path('app_homepage', {
-                                        ...app.request.query.all(),
-                                        sort: 'purpose',
-                                        sortDirection: sort == 'purpose' and sortDirection == 'asc' ? 'desc' : 'asc',
-                                    }) }}">
-                                        Purpose {{ _self.sortArrow('purpose', sort, sortDirection) }}
+                                    {% set column = voyages.columns.get('purpose') %}
+                                    <a href="{{ column.applyOppositeSort }}">
+                                        Purpose {{ _self.sortArrow(column.sort.direction|default) }}
                                     </a>
                                 </th>
                                 <th class="text-left py-2 pr-4">Planet</th>
                                 <th class="text-left py-2">
-                                    <a href="{{ path('app_homepage', {
-                                        ...app.request.query.all(),
-                                        sort: 'leaveAt',
-                                        sortDirection: sort == 'leaveAt' and sortDirection == 'asc' ? 'desc' : 'asc',
-                                    }) }}">
-                                        Departing {{ _self.sortArrow('leaveAt', sort, sortDirection) }}
+                                    {% set column = voyages.columns.get('leaveAt') %}
+                                    <a href="{{ column.applyOppositeSort }}">
+                                        Departing {{ _self.sortArrow(column.sort.direction|default) }}
                                     </a>
                                 </th>
                             </tr>
@@ -161,14 +155,14 @@
                     </table>
                 </div>
                 <div class="flex items-center mt-6 space-x-4">
-                    {% if voyages.hasPreviousPage %}
-                        <a href="{{ pagerfanta_page_url(voyages, voyages.previousPage) }}" class="block py-2 px-4 bg-gray-700 text-white rounded hover:bg-gray-600">Previous</a>
+                    {% if voyages.page.previousPage %}
+                        <a href="{{ voyages.input.applyPage(voyages.page.previousPage) }}" class="block py-2 px-4 bg-gray-700 text-white rounded hover:bg-gray-600">Previous</a>
                     {% endif %}
-                    {% if voyages.hasNextPage %}
-                        <a href="{{ pagerfanta_page_url(voyages, voyages.nextPage) }}" class="block py-2 px-4 bg-gray-700 text-white rounded hover:bg-gray-600">Next</a>
+                    {% if voyages.page.nextPage %}
+                        <a href="{{ voyages.input.applyPage(voyages.page.nextPage) }}" class="block py-2 px-4 bg-gray-700 text-white rounded hover:bg-gray-600">Next</a>
                     {% endif %}
                     <div class="ml-4">
-                        Page {{ voyages.currentPage }}/{{ voyages.nbPages }}
+                        Page {{ voyages.page.currentPage }}/{{ voyages.page.pageCount }}
                     </div>
                 </div>
 
