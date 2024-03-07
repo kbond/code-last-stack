@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Manage Voyages{% endblock %}
+
+{% block body %}
+<div class="m-4 p-4 bg-gray-800 rounded-lg">
+    <div
+        class="flex justify-between"
+    >
+        <h1 class="text-xl font-semibold text-white mb-4">Voyages</h1>
+
+        <twig:Button
+            tag="a"
+            href="{{ path('app_voyage_new') }}"
+            data-turbo-frame="modal"
+            class="flex items-center space-x-1 font-bold"
+        >
+            <span>New Voyage</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 inline" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" /><path d="M9 12h6" /><path d="M12 9v6" /></svg>
+        </twig:Button>
+    </div>
+
+    <table class="min-w-full bg-gray-800 text-white" id="voyage-list">
+        <thead class="border-b border-gray-700">
+            <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Id</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Purpose</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">LeaveAt</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Actions</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-600">
+            {% for voyage in voyages %}
+                {{ include('voyage/_row.html.twig') }}
+            {% else %}
+                <tr>
+                    <td colspan="4" class="px-6 py-4 whitespace-nowrap text-center text-gray-400">No records found</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

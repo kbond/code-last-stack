@@ -1,0 +1,10 @@
+<turbo-frame id="planet-card-{{ planet.id }}">
+    <div class="px-6 py-4">
+        <h4>
+            <a class="hover:text-blue-300 transition-colors duration-100" href="{{ path('app_planet_show', { id: planet.id }) }}">
+                {{ planet.name }}
+            </a>
+        </h4>
+        <small>{{ planet.lightYearsFromEarth|round|number_format }} ly</small>
+    </div>
+</turbo-frame>

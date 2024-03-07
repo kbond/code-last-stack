@@ -1,0 +1,33 @@
+<div {{ attributes }}>
+    <div class="relative">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"/><path d="M21 21l-6 -6"/></svg>
+        </div>
+        <input
+            type="search"
+            data-model="query"
+            aria-label="Search site"
+            placeholder="Search for anything"
+            class="px-4 py-2 pl-10 rounded bg-gray-800 text-white placeholder-gray-400 w-full outline-none"
+        />
+    </div>
+
+    {% if this.voyages is not empty %}
+    <div class="text-white py-2 rounded-lg">
+        {% for voyage in this.voyages %}
+            <a href="{{ path('app_voyage_show', { id: voyage.id }) }}" class="flex items-center space-x-4 px-4 p-2 hover:bg-gray-700 cursor-pointer">
+                <img
+                    class="h-10 w-10 rounded-full"
+                    src="{{ asset('images/'~voyage.planet.imageFilename) }}"
+                    alt="{{ voyage.planet.name }} planet"
+                >
+
+                <div>
+                    <p class="text-sm font-medium text-white">{{ voyage.purpose }}</p>
+                    <p class="text-xs text-gray-400">{{ voyage.leaveAt|ago }}</p>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
